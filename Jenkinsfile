@@ -3,62 +3,54 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "my-node-app:latest"
-        DOCKER_REGISTRY_CREDENTIALS_ID = "dockerhub-credentials-id" // Replace with your actual credentials ID
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/JothiShivani/node-sample.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    docker.build(DOCKER_IMAGE)
+                    // Build Docker image
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
                 }
             }
         }
 
         stage('Run Tests') {
-    steps {
-        script {
-            // Run the Docker container in detached mode
-            def container = docker.run(DOCKER_IMAGE, "-d", "-p", "3005:3005")
-            
-            // Wait for the container to start
-            bat 'timeout /t 10 /nobreak'
+            steps {
+                script {
+                    // Run Docker container in detached mode
+                    sh 'docker run -d -p 3005:3005 --name my_container ${DOCKER_IMAGE}'
+                    
+                    // Wait for the container to start
+                    sleep(time: 10, unit: 'SECONDS')
 
-            // Check container logs
-            bat "docker logs ${container.id}"
-            
-            // Run any tests against the container (customize this as needed)
-            // Example: curl or wget commands to check if the application is running correctly
-            bat "curl http://localhost:3005"
+                    // Check container logs
+                    sh 'docker logs my_container'
+                    
+                    // Run any tests against the container (customize this as needed)
+                    // Example: curl or wget commands to check if the application is running correctly
+                    sh 'curl http://localhost:3005'
 
-            // Stop and remove the container
-            bat "docker stop ${container.id}"
-            bat "docker rm ${container.id}"
+                    // Stop and remove the container
+                    sh 'docker stop my_container'
+                    sh 'docker rm my_container'
+                }
+            }
         }
-    }
-}
 
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_REGISTRY_CREDENTIALS_ID) {
-                        docker.image(DOCKER_IMAGE).push('latest')
-                    }
+                    // Push Docker image to registry
+                    sh 'docker push ${DOCKER_IMAGE}'
                 }
             }
         }
-    }
 
-    post {
-        always {
-            cleanWs()
+        stage('Cleanup') {
+            steps {
+                cleanWs() // Clean up workspace
+            }
         }
     }
 }
