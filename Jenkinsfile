@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    sh 'docker build -t ${DOCKER_IMAGE} .'
+                    bat 'docker build -t %DOCKER_IMAGE% .'
                 }
             }
         }
@@ -19,21 +19,21 @@ pipeline {
             steps {
                 script {
                     // Run Docker container in detached mode
-                    sh 'docker run -d -p 3005:3005 --name my_container ${DOCKER_IMAGE}'
+                    bat 'docker run -d -p 3005:3005 --name my_container %DOCKER_IMAGE%'
                     
                     // Wait for the container to start
                     sleep(time: 10, unit: 'SECONDS')
-
+                    
                     // Check container logs
-                    sh 'docker logs my_container'
+                    bat 'docker logs my_container'
                     
                     // Run any tests against the container (customize this as needed)
-                    // Example: curl or wget commands to check if the application is running correctly
-                    sh 'curl http://localhost:3005'
-
+                    // Example: using curl to check if the application is running correctly
+                    bat 'curl http://localhost:3005'
+                    
                     // Stop and remove the container
-                    sh 'docker stop my_container'
-                    sh 'docker rm my_container'
+                    bat 'docker stop my_container'
+                    bat 'docker rm my_container'
                 }
             }
         }
@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     // Push Docker image to registry
-                    sh 'docker push ${DOCKER_IMAGE}'
+                    bat 'docker push %DOCKER_IMAGE%'
                 }
             }
         }
