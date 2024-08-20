@@ -29,6 +29,7 @@ pipeline {
                     def containerId = container.id.trim()
 
                     // Execute commands inside the running container
+                    bat "docker ps -a"
                     bat "docker exec ${containerId} npm install"
                     bat "docker exec ${containerId} npm test"
 
