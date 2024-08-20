@@ -22,17 +22,23 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                script {
-                    docker.image("${DOCKER_IMAGE}:latest").inside {
-                
-                        bat 'echo "Hello from inside Docker"'
-                        bat 'npm install'
-                        bat 'npm test' 
-                    }
-                }
-            }
+    steps {
+        script {
+          // Run the Docker container in detached mode (-d)
+                    def container = docker.image("${DOCKER_IMAGE}:latest").run('-d')
+
+                    // Execute commands inside the running container
+                    bat "docker exec ${container.id} echo 'Hello from inside Docker'"
+                    bat "docker exec ${container.id} npm install"
+                    bat "docker exec ${container.id} npm test"
+
+                    // Stop and remove the container
+                    container.stop()
+                    bat "docker rm ${container.id}"
         }
+    }
+}
+
 
         stage('Deploy') {
             steps {
