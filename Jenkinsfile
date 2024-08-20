@@ -25,6 +25,8 @@ pipeline {
             steps {
                 script {
                     docker.image("${DOCKER_IMAGE}:latest").inside {
+                
+                        bat 'echo "Hello from inside Docker"'
                         bat 'npm install'
                         bat 'npm test' 
                     }
