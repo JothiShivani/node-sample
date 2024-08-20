@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "my-node-app:latest"
+        DOCKER_CREDENTIALS_ID = 'DOCKERPASS' // ID of your Docker Hub credentials
     }
 
     stages {
@@ -41,8 +42,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Push Docker image to registry
-                    bat 'docker push %DOCKER_IMAGE%'
+                    // Log in to Docker Hub
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        // Push Docker image to registry
+                        bat 'docker push %DOCKER_IMAGE%'
+                    }
                 }
             }
         }
