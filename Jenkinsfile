@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "my-node-app:latest"
-        DOCKER_CREDENTIALS_ID = 'DOCKERPASS' // ID of your Docker Hub credentials
+        DOCKER_CREDENTIALS_ID = 'DOCKERPASS' // Make sure this matches the ID in Jenkins credentials
     }
 
     stages {
@@ -29,7 +29,6 @@ pipeline {
                     bat 'docker logs my_container'
                     
                     // Run any tests against the container (customize this as needed)
-                    // Example: using curl to check if the application is running correctly
                     bat 'curl http://localhost:3005'
                     
                     // Stop and remove the container
