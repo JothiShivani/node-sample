@@ -25,16 +25,16 @@ pipeline {
     steps {
         script {
           // Run the Docker container in detached mode (-d)
-                    def container = docker.image("${DOCKER_IMAGE}:latest").run('-d').id
+                    def container = docker.image("${DOCKER_IMAGE}:latest").run('-d')
 
                     // Execute commands inside the running container
-                    bat "docker exec ${container.id} echo 'Hello from inside Docker'"
-                    bat "docker exec ${container.id} npm install"
-                    bat "docker exec ${container.id} npm test"
+                    bat "docker exec ${container} echo 'Hello from inside Docker'"
+                    bat "docker exec ${container} npm install"
+                    bat "docker exec ${container} npm test"
 
                     // Stop and remove the container
-                    container.stop()
-                    bat "docker rm ${container.id}"
+                     bat "docker stop ${container}"
+                    bat "docker rm ${container}"
         }
     }
 }
