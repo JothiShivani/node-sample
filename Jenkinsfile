@@ -25,7 +25,7 @@ pipeline {
     steps {
         script {
           // Run the Docker container in detached mode (-d)
-                    def container = docker.image("${DOCKER_IMAGE}:latest").run('-d')
+                    def container = docker.image("${DOCKER_IMAGE}:latest").run('-d').id
 
                     // Execute commands inside the running container
                     bat "docker exec ${container.id} echo 'Hello from inside Docker'"
