@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "jothishivani/my-node-app:latest"  // Updated with your Docker Hub username
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credential'  // Updated to match your credentials ID
+        DOCKER_IMAGE = "my-node-app"  
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'  // Updated to match your credentials ID
     }
 
     stages {
@@ -42,9 +42,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([url: "https://index.docker.io/v1/", credentialsId: DOCKER_CREDENTIALS_ID]) {
-                        //bat tag cli jothishivani/cli
-                        //docker push jothishivani/cli(to dockerhub)
-                        bat 'docker push %DOCKER_IMAGE%'
+                        bat 'docker tag %DOCKER_IMAGE% jothishivani/%DOCKER_IMAGE%'
+                        bat 'docker push jothishivani/%DOCKER_IMAGE%'
                     }
                 }
             }
