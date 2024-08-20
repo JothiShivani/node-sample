@@ -39,16 +39,15 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            steps {
-                script {
-                    // Log in to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        // Push Docker image to registry
-                        bat 'docker push %DOCKER_IMAGE%'
-                    }
-                }
+    steps {
+        script {
+            withDockerRegistry([url: 'https://index.docker.io/v1/', credentialsId: DOCKER_CREDENTIALS_ID]) {
+                bat 'docker push joeshiv/my-node-app:latest --max-attempts=10'
             }
         }
+    }
+}
+
 
         stage('Cleanup') {
             steps {
