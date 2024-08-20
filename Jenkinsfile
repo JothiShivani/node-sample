@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "my-node-app:latest"
-        DOCKER_CREDENTIALS_ID = 'DOCKERPASS' // Make sure this matches the ID in Jenkins credentials
+        DOCKER_IMAGE = "joeshiv/my-node-app:latest"  // Update with your Docker Hub username
+        DOCKER_CREDENTIALS_ID = 'DOCKERPASS'  // Make sure this matches the ID in Jenkins credentials
     }
 
     stages {
@@ -55,5 +55,3 @@ pipeline {
                 cleanWs() // Clean up workspace
             }
         }
-    }
-}
