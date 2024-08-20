@@ -23,27 +23,27 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                script {
-                    // Run the Docker container in detached mode
-                    def container = docker.run(DOCKER_IMAGE, "-d", "-p", "8081:8081")
-                    
-                    // Wait for the container to start
-                    bat 'timeout /t 10 /nobreak'
+    steps {
+        script {
+            // Run the Docker container in detached mode
+            def container = docker.run(DOCKER_IMAGE, "-d", "-p", "3005:3005")
+            
+            // Wait for the container to start
+            bat 'timeout /t 10 /nobreak'
 
-                    // Check container logs
-                    bat "docker logs ${container.id}"
-                    
-                    // Run any tests against the container (customize this as needed)
-                    // Example: curl or wget commands to check if the application is running correctly
-                    bat "curl http://localhost:8081"
+            // Check container logs
+            bat "docker logs ${container.id}"
+            
+            // Run any tests against the container (customize this as needed)
+            // Example: curl or wget commands to check if the application is running correctly
+            bat "curl http://localhost:3005"
 
-                    // Stop the container
-                    bat "docker stop ${container.id}"
-                    bat "docker rm ${container.id}"
-                }
-            }
+            // Stop and remove the container
+            bat "docker stop ${container.id}"
+            bat "docker rm ${container.id}"
         }
+    }
+}
 
         stage('Push Docker Image') {
             steps {
