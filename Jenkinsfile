@@ -158,30 +158,29 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+ stage('Run Tests') {
             steps {
                 script {
                     // Run the Docker container in detached mode, exposing port 8081
                     def container = docker.image(DOCKER_IMAGE).run('-d -p 8081:8081')
                     
                     // Wait for the container to initialize
-                    sleep(time: 10, unit: 'SECONDS')
-
+                    bat 'timeout /t 10 /nobreak'
+                    
                     // Check container logs for errors
-                    sh "docker logs ${container.id}"
+                    bat "docker logs ${container.id}"
                     
                     // Perform a simple test to check if the application is accessible
-                    sh "curl http://localhost:8081"
+                    bat "curl http://localhost:8081"
                     
                     // Stop the container after tests
-                    sh "docker stop ${container.id}"
+                    bat "docker stop ${container.id}"
                     
                     // Remove the stopped container
-                    sh "docker rm ${container.id}"
+                    bat "docker rm ${container.id}"
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
                 script {
