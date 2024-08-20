@@ -38,11 +38,11 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-    steps {
-        script {
-            withDockerRegistry([url: 'https://index.docker.io/v1/', credentialsId: DOCKER_CREDENTIALS_ID]) {
-                bat 'docker push joeshiv/my-node-app:latest --max-attempts=10'
+            stage('Push Docker Image') {
+        steps {
+            script {
+                withDockerRegistry([url: "https://index.docker.io/v1/", credentialsId: "docker-hub-credentials"]) {
+                bat 'docker push joeshiv/my-node-app:latest'
             }
         }
     }
