@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "joeshiv/my-node-app:latest"  // Update with your Docker Hub username
-        DOCKER_CREDENTIALS_ID = 'DOCKERPASS'  // Make sure this matches the ID in Jenkins credentials
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'  // Ensure this matches the ID in Jenkins credentials
     }
 
     stages {
@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    bat 'docker build -t %DOCKER_IMAGE% .'
+                    bat "docker build -t %DOCKER_IMAGE% ."
                 }
             }
         }
@@ -20,34 +20,34 @@ pipeline {
             steps {
                 script {
                     // Run Docker container in detached mode
-                    bat 'docker run -d -p 3005:3005 --name my_container %DOCKER_IMAGE%'
+                    bat "docker run -d -p 3005:3005 --name my_container %DOCKER_IMAGE%"
                     
                     // Wait for the container to start
                     sleep(time: 10, unit: 'SECONDS')
                     
                     // Check container logs
-                    bat 'docker logs my_container'
+                    bat "docker logs my_container"
                     
                     // Run any tests against the container (customize this as needed)
-                    bat 'curl http://localhost:3005'
+                    bat "curl http://localhost:3005"
                     
                     // Stop and remove the container
-                    bat 'docker stop my_container'
-                    bat 'docker rm my_container'
+                    bat "docker stop my_container"
+                    bat "docker rm my_container"
                 }
             }
         }
 
-            stage('Push Docker Image') {
-        steps {
-            script {
-                withDockerRegistry([url: "https://index.docker.io/v1/", credentialsId: "docker-hub-credentials"]) {
-                bat 'docker push joeshiv/my-node-app:latest'
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Log in to Docker Hub and push the image
+                    withDockerRegistry([url: 'https://index.docker.io/v1/', credentialsId: "${DOCKER_CREDENTIALS_ID}"]) {
+                        bat "docker push %DOCKER_IMAGE%"
+                    }
+                }
             }
         }
-    }
-}
-
 
         stage('Cleanup') {
             steps {
